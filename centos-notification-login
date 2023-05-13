@@ -1,0 +1,33 @@
+#!/bin/bash
+#You can pull it into Centos7 linux and change CHAT_ID | BOT_TOKEN
+#rename it from "centos-notification=login" to "sshrc" and copy to /etc/ssh/
+#after that you change permission 0775 for sshrc file via command chmod 0775 sshrc
+#enjoy it!!!
+
+export LANG=C
+
+#CHAT ID information
+TELEGRAM_CHAT_ID="XXXXXXXXXXXXXX"
+#BOT Token information
+TELEGRAM_BOT_TOKEN="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+#Declare variables with necessary information.
+LOGGED_USER="$(whoami)"
+LOGGED_HOST="$(hostname -f)"
+LOGGED_IP="$(echo $SSH_CONNECTION | cut -d " " -f 1)"
+NOW="$(date)"
+
+#Content send to Telegram BOT
+MESSAGE="$(echo -e "<strong>SSH Login Notification</strong>\nHost: $LOGGED_HOST\nUser: $LOGGED_USER\nIP: $LOGGED_IP\nTime: $NOW")"
+
+#Configuration for HTTP API CALL
+/usr/bin/curl --silent --output /dev/null \
+    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+    --data-urlencode "text=${MESSAGE}" \
+    --data-urlencode "parse_mode=HTML" \
+    --data-urlencode "disable_web_page_preview=true" \
+    "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?"
+
+#My website: https://baonl.website
+#Youtube Channel: https://youtube.com/c/baonlhub
+#baonl | longbao87 | baonl hub | centos7 | send notification to telegram after login into Centos7
